@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>To - Do List </title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="todo-app">
+            <button class="theme-toggle" aria-label="Toggle dark/light theme" title="Toggle dark/light theme">
+                ☀️
+            </button>
+            <h2>To - Do List <img src="images/icon.png" alt="" srcset=""></h2>
+            <div class="row">
+                <input type="text" id="input-box" placeholder="Add your task">
+                <button onclick="addTask()">Add</button>
+            </div>
+            <ul id="list-container">
+                </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Made with ❤️ Ash</p>
+    </div>
+
+    <script>
+        const inputBox = document.getElementById("input-box");
+        const listContainer = document.getElementById("list-container");
+        const themeToggleBtn = document.querySelector(".theme-toggle"); // Get the new button
+
+        // Function to add a task
+        function addTask() {
+            if (inputBox.value === '') {
+                alert('You must write something');
+            } else {
+                let li = document.createElement("li");
+                li.innerHTML = inputBox.value;
+                listContainer.appendChild(li);
+                let span = document.createElement("span");
+                span.innerHTML = "\u00d7";
+                li.appendChild(span);
+            }
+            inputBox.value = "";
+            saveData();
+        }
+
+        // Event listener for task completion/deletion
+        listContainer.addEventListener("click", function (e) {
+            if (e.target.tagName === "LI") {
+                e.target.classList.toggle("checked");
+                saveData();
+            } else if (e.target.tagName === "SPAN") {
+                e.target.parentElement.remove();
+                saveData();
+            }
+        }, false);
+
+        function saveData() {
+            localStorage.setItem("data", listContainer.innerHTML);
+            localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
+        }
+
+        // Function to update the toggle button's text/icon
+        function updateToggleButtonIcon() {
+            if (document.body.classList.contains("dark-mode")) {
+                themeToggleBtn.textContent = '🌙';
+                themeToggleBtn.title = 'Switch to light theme';
+            } else {
+                themeToggleBtn.textContent = '☀️'; 
+                themeToggleBtn.title = 'Switch to dark theme';
+            }
+        }
+
+        // Function to show tasks and load dark mode state
+        function showTask() {
+            listContainer.innerHTML = localStorage.getItem("data");
+            const isDarkMode = localStorage.getItem("darkMode") === "true";
+            if (isDarkMode) {
+                document.body.classList.add("dark-mode");
+            }
+            updateToggleButtonIcon(); 
+        }
+
+        
+        themeToggleBtn.addEventListener("click", () => {
+            document.body.classList.toggle("dark-mode");
+            updateToggleButtonIcon(); 
+            saveData(); 
+        });
+
+        showTask(); 
+    </script>
+</body>
+
+</html>
